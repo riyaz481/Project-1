@@ -1,0 +1,178 @@
+package AutomationFramework;
+
+import java.util.List;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+public class Mmt 
+{
+	public static WebDriver driver ;
+	public static By From = By.xpath("//*[@id='hp-widget__sfrom']");
+	public static By To = By.xpath("//*[@id='hp-widget__sTo']");
+	public static By Search = By.xpath("//*[@id='searchBtn']");
+	public static By FromC = By.xpath("//*[@id='ui-id-1']");
+	public static By Submit = By.xpath("//input[@name='submit']");
+	public static By Email = By.xpath("//input[@placeholder='Email']");
+	public static By Name = By.xpath("//input[@placeholder='Name']");
+	public static By phone = By.xpath("//input[@placeholder='Phone']");
+	
+	
+	public static void launch()
+	
+	{
+		System.setProperty("webdriver.chrome.driver", "D:\\ChromeDriver\\chromedriver.exe");
+		 driver = new ChromeDriver();
+		
+		 driver.get(" http://codeuridea.net/automation/");
+		// driver.get("https://www.makemytrip.com");
+		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+		driver.manage().window().maximize();
+
+	}
+	
+	
+	public static void sendinput(By Txtpath , String input)
+	
+	{
+		
+		WebDriverWait wait = new WebDriverWait(driver,20);
+		WebElement Tbox;
+		Tbox=wait.until(ExpectedConditions.visibilityOfElementLocated(Txtpath));
+		Tbox.click();
+		Tbox.sendKeys(input);
+	}
+	
+	public static void Click(By Button)
+	
+	{
+		WebDriverWait wait = new WebDriverWait(driver,20);
+		WebElement Ele;
+		Ele=wait.until(ExpectedConditions.elementToBeClickable(Button));
+		Ele.click();
+		
+	}
+	
+	
+	public static void SelectFromCity() throws InterruptedException
+	
+	{
+		Thread.sleep(1500);
+		Random R1= new Random();
+		WebDriverWait wait = new WebDriverWait(driver,20);
+		
+		/*int num =R1.nextInt(9);
+		
+		if(num==0 || num==1)
+		num=num+2;*/
+		
+		WebElement Fcity = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='ui-id-1']/li["+7+"]")));
+		Fcity.click();
+		
+	}
+	
+	public static void SelectToCity() throws InterruptedException
+	{
+		Thread.sleep(1500);
+		Random R1= new Random();
+		WebDriverWait wait = new WebDriverWait(driver,20);
+		int num =R1.nextInt(5);
+		if(num==0 || num==1)
+			num=num+2;
+			
+			WebElement Tcity = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='ui-id-2']/li["+num+"]")));
+			Tcity.click();
+	}
+	
+	
+	public static void SearchFlight() throws InterruptedException
+	
+	{
+		Mmt.Click(From);
+		Mmt.SelectFromCity();
+		Mmt.Click(To);
+		Mmt.SelectToCity();
+		Mmt.Click(Search);
+		printResultList();
+		
+	}
+	
+	public static void printResultList() throws InterruptedException
+	{
+		Thread.sleep(4000);
+		List<WebElement> items = driver.findElements(By.xpath("//div[@class = 'top_first_part clearfix']"));
+		System.out.println(items.size());
+		int Results =items.size();
+		if(Results==0)
+		{
+			System.out.println("No Flights Found");
+			
+		}
+		else
+		{
+			for(int i=0;i<Results;i++)
+			System.out.println(items.get(i).getText());
+		}
+		
+		
+		
+	}
+	
+	
+
+
+	public static void WithCheckValidation() throws InterruptedException {
+		
+		
+		Click(Mmt.Submit);
+		Thread.sleep(1000);
+		WebElement Email = driver.findElement(Mmt.Email);
+		
+		String validationMessage = Email.getAttribute("validationMessage");
+		System.out.println("Validation message is displaying as "+validationMessage);
+		String ExpectedResult = "Please fill out this field.";
+		
+		
+		if (validationMessage.equals(ExpectedResult))
+			
+		{
+			Email.sendKeys("RIyaz");
+			driver.findElement(By.xpath("//*[@id='abc']")).sendKeys("Manual");
+			Thread.sleep(3000);
+			Click(Mmt.Submit);
+		}
+		
+	}
+	
+	
+	public static void WithoutCheckValidation() throws InterruptedException
+	
+	{
+		WebElement Name = driver.findElement(Mmt.Name);
+		WebElement Email = driver.findElement(Mmt.Email);
+		WebElement Phone = driver.findElement(Mmt.phone);
+		Name.sendKeys("Riyaz Mohammed");
+		Email.sendKeys("TestGmail.com");
+		Phone.sendKeys("95684485");
+		driver.findElement(By.xpath("//*[@id='abc']")).sendKeys("Automation");
+		driver.findElement(By.xpath("//*[@id='framework']")).sendKeys("Selenium");
+		Click(Mmt.Submit);
+		
+	}
+	
+	
+	
+	
+	
+
+}
